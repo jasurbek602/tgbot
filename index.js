@@ -52,7 +52,7 @@ bot.on("voice", async (msg) => {
       form.append("audio", fs.createReadStream(tempPath));
       form.append("task", task);
 
-      const res = await axios.post(`${process.env.API_URL}/api/audio/upload`, form, {
+      const res = await axios.post(`tgbot-production-ca44.up.railway.app/api/audio/upload`, form, {
         headers: form.getHeaders()
       });
 
