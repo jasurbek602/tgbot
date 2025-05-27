@@ -1,0 +1,14 @@
+{
+  "name": "speaking-b",
+  "version": "1.0.0",
+  "description": "Insert tokens in `.env`, then run the bot and server.#\u0000 \u0000m\u0000y\u0000l\u0000o\u0000y\u0000h\u0000a\u0000\r\u0000 \u0000",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "node-telegram-bot-api": "^0.61.0"
+  },
+  "author": "",
+  "license": "ISC"
+}
