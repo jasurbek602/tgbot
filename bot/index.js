@@ -7,6 +7,7 @@ const multer = require('multer');
 const axios = require('axios');
 const fs = require('fs');
 const cors = require('cors');
+const FormData = require('form-data');
 
 // === Tokenlar va sozlamalar ===
 const TELEGRAM_BOT_TOKEN = '8172728469:AAHMFtbU1iYpROEWSjXDN-HoRgAW6leABX0';
@@ -34,7 +35,7 @@ bot.onText(/\/start/, (msg) => {
 
 bot.on('contact', (msg) => {
   const chatId = msg.chat.id;
-  const webAppUrl = 'https://public-orpin-beta.vercel.app/';
+  const webAppUrl = 'https://public-orpin-beta.vercel.app/'; // <-- o'zingizning Web App URL
 
   bot.sendMessage(chatId, "Raxmat! Endi sahifaga o‘ting:", {
     reply_markup: {
@@ -45,19 +46,29 @@ bot.on('contact', (msg) => {
 
 // === API: /upload ===
 app.post('/upload', upload.single('audio'), async (req, res) => {
-  const filePath = req.file.path;
+  const filePath = req.file?.path;
+  console.log('🔹 Audio fayl qabul qilindi:', filePath);
+
+  if (!filePath) {
+    return res.status(400).json({ error: 'Audio fayl topilmadi' });
+  }
 
   try {
-    const audio = fs.createReadStream(filePath);
-    const whisperRes = await axios.post('https://api.openai.com/v1/audio/transcriptions', audio, {
+    const form = new FormData();
+    form.append('file', fs.createReadStream(filePath));
+    form.append('model', 'whisper-1');
+
+    console.log('📤 Whisper API ga yuborilmoqda...');
+
+    const whisperRes = await axios.post('https://api.openai.com/v1/audio/transcriptions', form, {
       headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
-        'Content-Type': 'multipart/form-data'
-      },
-      params: { model: 'whisper-1' }
+        ...form.getHeaders(),
+        Authorization: `Bearer ${OPENAI_API_KEY}`
+      }
     });
 
     const transcript = whisperRes.data.text;
+    console.log('📜 Transkript:', transcript);
 
     const criteria = `Evaluate the speaking response based on:
 • Grammar: Some simple structures, with frequent basic mistakes.
@@ -74,17 +85,19 @@ Give score 0–5 and a short feedback.`;
       ]
     }, {
       headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        Authorization: `Bearer ${OPENAI_API_KEY}`,
         'Content-Type': 'application/json'
       }
     });
 
     const feedback = gptRes.data.choices[0].message.content.trim();
+    console.log('✅ GPT baho:', feedback);
+
     res.json({ transcript, feedback });
     fs.unlinkSync(filePath);
   } catch (err) {
-    console.error('Xatolik:', err.message);
-    res.status(500).json({ error: 'Baholashda xatolik' });
+    console.error('❌ Xatolik:', err.response?.data || err.message);
+    res.status(500).json({ error: 'Baholashda xatolik yuz berdi' });
     if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
   }
 });
