@@ -2,7 +2,7 @@ const TelegramBot = require('node-telegram-bot-api');
 
 // === INSERT YOUR TELEGRAM BOT TOKEN ===
 const TELEGRAM_BOT_TOKEN = '8172728469:AAHMFtbU1iYpROEWSjXDN-HoRgAW6leABX0';
-const WEB_APP_URL = 'https://your-deployed-webapp-url.com';
+const WEB_APP_URL = 'https://public-orpin-beta.vercel.app/';
 
 const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true });
 
