@@ -34,7 +34,7 @@ bot.onText(/\/start/, (msg) => {
 
 bot.on('contact', (msg) => {
   const chatId = msg.chat.id;
-  const webAppUrl = 'https://your-vercel-app.vercel.app';
+  const webAppUrl = 'https://public-orpin-beta.vercel.app/';
 
   bot.sendMessage(chatId, "Raxmat! Endi sahifaga o‘ting:", {
     reply_markup: {
