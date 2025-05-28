@@ -35,7 +35,7 @@ bot.onText(/\/start/, (msg) => {
 
 bot.on('contact', (msg) => {
   const chatId = msg.chat.id;
-  const webAppUrl = 'https://tgbot-production-6b87.up.railway.app/upload'; // <-- o'zingizning Web App URL
+  const webAppUrl = 'https://public-orpin-beta.vercel.app/'; // <-- o'zingizning Web App URL
 
   bot.sendMessage(chatId, "Raxmat! Endi sahifaga o‘ting:", {
     reply_markup: {
