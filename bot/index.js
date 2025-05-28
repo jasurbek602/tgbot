@@ -16,7 +16,8 @@ const PORT = process.env.PORT || 5000;
 
 const app = express();
 app.use(cors());
-const upload = multer({ dest: 'uploads/' });
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 // === Telegram Bot sozlanmasi ===
 const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true });
@@ -46,16 +47,18 @@ bot.on('contact', (msg) => {
 
 // === API: /upload ===
 app.post('/upload', upload.single('audio'), async (req, res) => {
-  const filePath = req.file?.path;
-  console.log('🔹 Audio fayl qabul qilindi:', filePath);
+  const audioBuffer = req.file?.buffer;
 
-  if (!filePath) {
+  if (!audioBuffer) {
     return res.status(400).json({ error: 'Audio fayl topilmadi' });
   }
 
   try {
     const form = new FormData();
-    form.append('file', fs.createReadStream(filePath));
+    form.append('file', audioBuffer, {
+      filename: 'speech.webm',
+      contentType: 'audio/webm'
+    });
     form.append('model', 'whisper-1');
 
     console.log('📤 Whisper API ga yuborilmoqda...');
@@ -70,6 +73,7 @@ app.post('/upload', upload.single('audio'), async (req, res) => {
     const transcript = whisperRes.data.text;
     console.log('📜 Transkript:', transcript);
 
+    // GPT baholash
     const criteria = `Evaluate the speaking response based on:
 • Grammar: Some simple structures, with frequent basic mistakes.
 • Vocabulary: Sufficient but awkward at times.
@@ -94,11 +98,9 @@ Give score 0–5 and a short feedback.`;
     console.log('✅ GPT baho:', feedback);
 
     res.json({ transcript, feedback });
-    fs.unlinkSync(filePath);
   } catch (err) {
     console.error('❌ Xatolik:', err.response?.data || err.message);
     res.status(500).json({ error: 'Baholashda xatolik yuz berdi' });
-    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
   }
 });
 
