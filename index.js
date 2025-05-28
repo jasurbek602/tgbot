@@ -6,7 +6,7 @@ const axios = require('axios');
 const fs = require('fs');
 const FormData = require('form-data');
 
-mongoose.connect('mongodb+srv://tred005t:Jasurbek008@cluster0.pts8wns.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
+mongoose.connect('mongodb+srv://tred005t:Colline@cluster0.pts8wns.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
   .then(() => console.log("MongoDB connected."))
   .catch(err => console.error("❌ MongoDB xatosi:", err));;
 
