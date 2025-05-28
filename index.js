@@ -6,7 +6,9 @@ const axios = require('axios');
 const fs = require('fs');
 const FormData = require('form-data');
 
-mongoose.connect('mongodb+srv://tred005t:Jasurbek008@cluster0.pts8wns.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0').then(() => console.log("MongoDB connected."));
+mongoose.connect('mongodb+srv://tred005t:Jasurbek008@cluster0.pts8wns.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
+  .then(() => console.log("MongoDB connected."))
+  .catch(err => console.error("❌ MongoDB xatosi:", err));;
 
 const bot = new TelegramBot('8172728469:AAHMFtbU1iYpROEWSjXDN-HoRgAW6leABX0', { polling: true });
 
