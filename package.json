@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "api/server.js",
   "scripts": {
-    "start": "concurrently \"node api/server.js\" \"node bot/index.js\" \"npx serve public\""
+    "start": "node api/server.js && node bot/index.js"
   },
   "dependencies": {
     "axios": "^1.6.0",
